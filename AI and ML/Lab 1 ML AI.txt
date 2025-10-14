@@ -1,0 +1,36 @@
+Lab 1
+
+1a
+Pandas is used for holding data within a table
+a Pandas "Series" would be treated as a column or row
+
+1b
+Pandas Data Frame would be treating the data as if it were in a table (Multiple series)
+
+1c
+df.iloc finds results based on the position index. Always numerical, similar to an array index. Useful to find data that is sorted and to find data stored in a specific location. df.loc finds results based on attributed labels (can be strings). Use this for when data has custom labels and you need to find a specific record.
+
+2a
+first 6 records 
+>>>df.head(6)
+
+2b
+last 3 records 
+>>>df.tail(3)
+
+2c
+Finding names of columns
+>>>df.columns
+>>>df.dtypes
+
+2d
+young 8, pre-presbyotic 8, presbyotic 8, 24 entries
+df['age'].value_counts()
+
+2e.
+
+basic stats info
+>>>df.describe()
+
+3a.
+>>>df.loc[2]

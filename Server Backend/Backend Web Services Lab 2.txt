@@ -1,0 +1,52 @@
+Client and Server Architecture
+What does ‘HTML’ stand for? Define the term and describe where it fits into client side web development.
+Hypertext Markup Language defines the content and structure of the web content that can be requested by a "client" (web browser, CL tool, IoT Device, Mobile or desktop application.
+
+What does ‘TCP/IP’ stand for? Define the term and describe where it fits into the networking stack
+Transmission Control Protocol/Internet protocol, a suite of communication "rules" used to interconnect network devices. It is also used as a communications protocol in a private computer network.
+TCP/IP specifies how data is exchanged over the internet by providing end-to-end communications that identify how it should be broken into packets, addressed, transmitted, routed and received at the destination.
+
+What does ‘HTTP’ stand for? Define the term and describe where it fits into the networking stack
+Hypertext transfer protocol is an application layer protocol designed to transfer information between networked devices and runs on top of other layers of the network protocol stack. A typical HTTP flow involves a client machine making a request to a server, which then sends a response message.
+
+What is the difference between ‘HTTP’ and ‘HTTPS’? Why might we use one over the other?
+HTTPS is HTTP with encryption and verification. HTTPS uses TLS(SSL) to encrypt normal HTTP requests and responses, and to digitally sign and request those responses.
+
+What is the purpose of a URL? Why might we use it over specifying an IP address?
+Uniform Resource Locators, The address of a unique resource on the internet. It is one of the key mechanisms used by browsers to retrieve published resources such as HTML pages, CSS documents, images, etc.
+
+What is the Client-Server model? What is its significance when it comes to developing:
+The Client-Server Model is a distributed architecture where clients request services and servers provide them.
+A)	Web Applications / Web Sites
+The client requests data from the server containing the HTML and CSS elements and how they are to be displayed. If the website requires user information the client send that information usually in a set field and the server will allow access based on the information.
+B)	Internet-connected Smartphone/Mobile Apps
+Different client (requesting mobile friendly resources)
+
+What is an HTTP request method? What is the purpose of such methods?
+HTTP defines a set of request methods to indicate the purpose of the request and what is expected if the request is successful. Each has its own semantics , but some characteristics are shared across multiple methods, specifically request methods can be safe, idempotent or cacheable.
+
+What does it mean for an HTTP request method to be safe?
+A HTTP method is safe if it doesn't alter the state of the server. I.e a method is safe if its a read-only operation. such as GET, HEAD, OPTIONS. all safe methods are idempotent but not all idempotent methods are safe. PUT and DELETE are both idempotent but unsafe.
+
+What does it mean for an HTTP request method to be idempotent?
+
+
+What are the nine major HTTP request methods? What are each of them commonly used for?
+
+Programming Basics
+In programming (e.g. in Python) what is an if statement commonly used for? How does this differ from an if else statement? How do each of these differ from a match statement?
+
+
+In programming (e.g. in Python) what is an if statement commonly used for? How does this differ from an if else statement? How do each of these differ from a match statement?
+
+
+In programming (e.g. in Python) what is a for loop commonly used for? How would this differ from the purpose of a while(true) loop? (a while loop that specifies its condition is always true).
+
+
+In programming (e.g. in Python) what is the difference between an expression and a statement?
+
+
+In programming (e.g. in Python) what is the purpose of types? What benefit do they provide for the program / programmer? How do types differ from variables?
+
+
+In programming (e.g. in Python) what is the difference between a class and an object?

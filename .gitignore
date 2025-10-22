@@ -86,4 +86,11 @@ venv.bak/
 
 # Microsoft Office temporary files
 ~$*
-*.tmp
+
+# Project specific directories (ignore entire directories)
+ServerFiles-4.12/
+Object\ Oriented\ Programming/
+Server\ Backend/
+
+# Lock files
+*.LCK*

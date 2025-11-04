@@ -1,5 +1,9 @@
 # Resonant Strike - Controls Reference
 
+## 🥋 Stationary Wing Chun Combat
+
+**Important: You remain stationary! Enemies come to you. Master stance transitions and technique timing to win.**
+
 ## Wing Chun Stances (W/A/S/D)
 
 | Key | Stance | Color | Wing Chun Meaning | Combat Application |

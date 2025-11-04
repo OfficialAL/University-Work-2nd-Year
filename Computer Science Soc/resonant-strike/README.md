@@ -1,33 +1,59 @@
-# Resonant Strike - Game Jam Project
+# Resonant Strike
 
-**Tagline:** *Surf the wave. Ride the energy. Master the flow.*
+**Master Wing Chun. Channel your energy. Strike with precision.**
 
-## Overview
-Resonant Strike is a rhythm-inspired 1v1 PvE combat game built for a game jam with the theme "Waves". Players engage in dynamic duels using stance-based combat and energy wave mechanics.
+Resonant Strike is a Wing Chun-inspired 1v1 PvE combat game built in Godot 4.5. Experience authentic martial arts through first-person immersive combat, creating energy waves that visualize internal power flow.
 
-## Core Mechanics
+## Quick Start
 
-### Player Stances (W/A/S/D)
-- **W - Counter/Redirect**: Absorbs wave energy to build resonance for powerful counterstrikes
-- **A - Palm/Disperse**: Safely disperses wave energy with moderate damage output
-- **S - Rigid**: Aggressive stance that reflects waves for high damage (high risk/reward)
-- **D - Reserved**: For future advanced mechanics
+1. **Install:** Godot 4.5 or later
+2. **Import:** Open project.godot in Godot
+3. **Play:** Press F5 to run
+4. **Fight:** Use W/A/S/D for stances, I/J/K/L for techniques
 
-### Player Attacks (I/J/K/L)
-- **I**: Strike Left (Compression wave)
-- **J**: Strike Forward/Palm (Shear wave)
-- **K**: Strike Right (Compression wave)
-- **L**: Counter/Redirect (Phase-inverted wave)
+## Core Features
 
-## Game Loop
-1. Enemy appears and attacks with visible wave energy
-2. Player reacts by choosing stance and attack
-3. Wave interaction: energy absorbed, reflected, or dispersed
-4. Enemy AI responds: attacks, parries, or redirects
-5. Resolution: player or enemy defeated
-6. Next enemy spawns with increasing difficulty
+- **Authentic Wing Chun:** Traditional stances and techniques with proper philosophy
+- **Energy Visualization:** Enhanced materials show internal power through energy waves
+- **First-Person Combat:** Immersive perspective inspired by Ip Man 1
+- **Cinematic AI:** Telegraphed enemy attacks honoring martial arts cinema
+- **Visual Excellence:** Metallic materials, rim lighting, and glow effects
 
-## Enemy Types
+## Documentation
+
+- **[SETUP_GUIDE.md](SETUP_GUIDE.md)** - Installation and Godot basics
+- **[DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)** - Project architecture and systems  
+- **[IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md)** - Code details and technical implementation
+- **[CONTROLS_REFERENCE.md](CONTROLS_REFERENCE.md)** - Wing Chun controls and combat system
+- **[DEV_REFERENCE.md](DEV_REFERENCE.md)** - Quick reference for developers
+
+## Wing Chun Combat System
+
+### Stances (W/A/S/D)
+- **Bong Sau (W)** - Red - Wing arm deflection
+- **Tan Sau (A)** - Blue - Dispersing hand  
+- **Wu Sau (S)** - Green - Protecting hand
+- **Chi Sau (D)** - Yellow - Sticky hands
+
+### Techniques (I/J/K/L)
+- **Chain Punch (I)** - Straight-line power strikes
+- **Tan Da (J)** - Deflect and counter simultaneously
+- **Lap Sau (K)** - Grab and strike combination  
+- **Pak Sau (L)** - Quick deflection and opening
+
+## Status
+
+**Production Ready** - Complete Wing Chun combat system with enhanced visual materials and first-person immersive experience. All core systems implemented and tested.
+
+## Requirements
+
+- Godot 4.5+
+- 3D graphics capability
+- Keyboard for Wing Chun controls
+
+---
+
+*Inspired by the final dojo scene from Ip Man 1, honoring traditional Wing Chun philosophy through modern game development.*
 - **Fast Striker**: Quick attacks, low health, aggressive
 - **Heavy Brute**: High health, powerful attacks, slow
 - **Trickster**: High parry/redirect chance, unpredictable

@@ -23,15 +23,14 @@ sky_material = SubResource("ProceduralSkyMaterial_jyhfs")
 [sub_resource type="Environment" id="Environment_tefeu"]
 background_mode = 2
 sky = SubResource("Sky_tbgi4")
-glow_enabled = true
-glow_intensity = 0.8
-glow_strength = 1.2
-glow_bloom = 0.1
-tonemap_mode = 2
-tonemap_exposure = 1.1
 ambient_light_source = 2
 ambient_light_color = Color(0.4, 0.4, 0.6, 1)
 ambient_light_energy = 0.3
+tonemap_mode = 2
+tonemap_exposure = 1.1
+glow_enabled = true
+glow_strength = 1.2
+glow_bloom = 0.1
 
 [node name="Main" type="Node3D"]
 
@@ -55,6 +54,10 @@ shadow_opacity = 0.8
 
 [node name="Player" parent="." instance=ExtResource("3_tefeu")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0191409, 0.98398626, 0.0007454157)
+max_health = null
+max_resonance = null
+movement_speed = null
+attack_cooldown = null
 
 [node name="Camera3D" type="Camera3D" parent="Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
@@ -69,3 +72,5 @@ script = ExtResource("4_o6xl0")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_tefeu")
+
+[node name="ArenaManager" type="Node" parent="."]

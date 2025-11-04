@@ -1,18 +1,24 @@
 extends CharacterBody3D
 class_name PlayerController
 
-## Player controller for Resonant Strike
-## Handles stance switching (W/A/S/D) and directional attacks (I/J/K/L)
+## Player controller for Resonant Strike with Wing Chun Combat System integration
+## CONTROLS:
+## WASD: Switch between Wing Chun stances (W=BONG_SAU, A=TAN_SAU, S=WU_SAU, D=CHI_SAU)
+## IJKL: Execute Wing Chun techniques (I=CHAIN_PUNCH, J=TAN_DA, K=LAP_SAU, L=PAK_SAU)
+## Player remains stationary - enemies come to you!
 
-# Stance enumeration - Wing Chun inspired
+# Import Wing Chun combat system
+const WingChunCombat = preload("res://scripts/combat/wing_chun_combat_system.gd")
+
+# Wing Chun stances
 enum Stance {
-	BONG_SAU,    # S - Deflecting/Wing arm - high risk, redirects force
-	TAN_SAU,     # W - Dispersing hand - absorbs and neutralizes  
-	WU_SAU,      # A - Guarding hand - safe, protective
+	BONG_SAU,    # W - Deflecting/Wing arm - high risk, redirects force
+	TAN_SAU,     # A - Dispersing hand - absorbs and neutralizes  
+	WU_SAU,      # S - Guarding hand - safe, protective
 	CHI_SAU      # D - Sticky hands - advanced sensing/trapping
 }
 
-# Attack direction enumeration - Wing Chun techniques
+# Wing Chun techniques - with combat system integration
 enum AttackDirection {
 	CHAIN_PUNCH,     # I - Rapid centerline punch
 	TAN_DA,          # J - Simultaneous block and strike
@@ -23,7 +29,6 @@ enum AttackDirection {
 # Player stats
 @export var max_health: float = 100.0
 @export var max_resonance: float = 100.0
-@export var movement_speed: float = 5.0
 
 # Current state
 var current_health: float
@@ -61,8 +66,8 @@ var attack_timer: float = 0.0
 # References (to be set in scene)
 @onready var visual_mesh: MeshInstance3D = $Visual/PlayerMesh
 @onready var stance_indicator: MeshInstance3D = $Camera3D/StanceIndicator
-@onready var left_hand: MeshInstance3D = $Camera3D/LeftHand if has_node("Camera3D/LeftHand") else null
-@onready var right_hand: MeshInstance3D = $Camera3D/RightHand if has_node("Camera3D/RightHand") else null
+@onready var left_arm_controller = $Camera3D/LeftArm/WingChunController if has_node("Camera3D/LeftArm/WingChunController") else null
+@onready var right_arm_controller = $Camera3D/RightArm/WingChunController if has_node("Camera3D/RightArm/WingChunController") else null
 @onready var animation_player: AnimationPlayer = $AnimationPlayer if has_node("AnimationPlayer") else null
 
 # Signals
@@ -72,9 +77,23 @@ signal resonance_changed(new_value: float)
 signal health_changed(new_value: float)
 signal player_overloaded()
 
+# Wing Chun combat system
+var wing_chun_system: WingChunCombat
+var current_hitbox: Area3D = null
+var current_hurtbox: Area3D = null
+var attack_frame_count: int = 0
+var is_in_attack_frames: bool = false
+
 func _ready() -> void:
 	current_health = max_health
 	current_resonance = 0.0
+	
+	# Initialize Wing Chun combat system
+	wing_chun_system = WingChunCombat.new()
+	add_child(wing_chun_system)
+	
+	# Setup initial hurtbox for current stance
+	setup_stance_hurtbox()
 	
 	# Debug stance indicator
 	if stance_indicator:
@@ -96,36 +115,33 @@ func _physics_process(_delta: float) -> void:
 	# Handle stance switching
 	handle_stance_input()
 	
-	# Handle attacks
+	# Handle attacks  
 	handle_attack_input()
 	
-	# No movement - this is a stationary first-person combat game
-	# Player stays in position and focuses on stance/attack timing
-
-## First-person combat - no movement needed
-func handle_movement() -> void:
-	# Movement disabled - pure stance-based combat
+	# Stationary combat - no movement needed
 	velocity = Vector3.ZERO
+	move_and_slide()
 
-## Handle stance switching with W/A/S/D
+## Handle stance switching with W/A/S/D - stationary combat
 func handle_stance_input() -> void:
 	if not can_switch_stance or is_attacking:
 		return
 	
 	var new_stance: Stance = current_stance
 	
-	if Input.is_action_just_pressed("stance_counter"):  # W
-		new_stance = Stance.TAN_SAU
-		print("Switched to TAN SAU - Dispersing Hand (Blue)")
-	elif Input.is_action_just_pressed("stance_palm"):  # A
-		new_stance = Stance.WU_SAU
-		print("Switched to WU SAU - Guarding Hand (Green)")
-	elif Input.is_action_just_pressed("stance_rigid"):  # S
-		new_stance = Stance.BONG_SAU
-		print("Switched to BONG SAU - Wing Arm (Red)")
-	elif Input.is_action_just_pressed("stance_reserved"):  # D
-		new_stance = Stance.CHI_SAU
-		print("Switched to CHI SAU - Sticky Hands (Yellow)")
+	# WASD maps to the four Wing Chun stances
+	if Input.is_action_just_pressed("stance_counter"):  # W - Forward/Offensive
+		new_stance = Stance.BONG_SAU  # Wing arm - high risk deflection
+		print("Switched to BONG SAU - Wing Arm (High Risk Deflection)")
+	elif Input.is_action_just_pressed("stance_palm"):  # A - Left/Absorbing  
+		new_stance = Stance.TAN_SAU   # Dispersing hand - neutralizes force
+		print("Switched to TAN SAU - Dispersing Hand (Force Absorption)")
+	elif Input.is_action_just_pressed("stance_rigid"):  # S - Back/Defensive
+		new_stance = Stance.WU_SAU    # Guarding hand - safe protection
+		print("Switched to WU SAU - Guarding Hand (Safe Defense)")
+	elif Input.is_action_just_pressed("stance_reserved"):  # D - Right/Advanced
+		new_stance = Stance.CHI_SAU   # Sticky hands - sensing/trapping
+		print("Switched to CHI SAU - Sticky Hands (Advanced Sensing)")
 	
 	if new_stance != current_stance:
 		switch_stance(new_stance)
@@ -139,7 +155,7 @@ func switch_stance(new_stance: Stance) -> void:
 	# Play stance switch sound
 	# AudioManager.play_stance_switch(new_stance)
 
-## Handle attack input with I/J/K/L
+## Handle attack input with I/J/K/L - execute Wing Chun techniques
 func handle_attack_input() -> void:
 	if is_attacking:
 		return
@@ -147,19 +163,20 @@ func handle_attack_input() -> void:
 	var attack_dir: AttackDirection = AttackDirection.TAN_DA
 	var should_attack: bool = false
 	
-	if Input.is_action_just_pressed("attack_left"):  # I
+	# IJKL maps to the four Wing Chun techniques
+	if Input.is_action_just_pressed("attack_left"):  # I - Chain punch
 		attack_dir = AttackDirection.CHAIN_PUNCH
 		should_attack = true
 		print("CHAIN PUNCH - Rapid centerline strike!")
-	elif Input.is_action_just_pressed("attack_forward"):  # J
+	elif Input.is_action_just_pressed("attack_forward"):  # J - Block & strike
 		attack_dir = AttackDirection.TAN_DA
 		should_attack = true
 		print("TAN DA - Simultaneous block and strike!")
-	elif Input.is_action_just_pressed("attack_right"):  # K
+	elif Input.is_action_just_pressed("attack_right"):  # K - Redirect
 		attack_dir = AttackDirection.LAP_SAU
 		should_attack = true
 		print("LAP SAU - Pulling hand redirect!")
-	elif Input.is_action_just_pressed("attack_redirect"):  # L
+	elif Input.is_action_just_pressed("attack_redirect"):  # L - Trap
 		attack_dir = AttackDirection.PAK_SAU
 		should_attack = true
 		print("PAK SAU - Slapping hand trap!")
@@ -259,12 +276,12 @@ func get_technique_name(direction: AttackDirection) -> String:
 	return "UNKNOWN"
 
 ## Animate wave traveling to target
-func animate_wave_to_target(wave: MeshInstance3D, direction: AttackDirection) -> void:
+func animate_wave_to_target(wave: MeshInstance3D, _direction: AttackDirection) -> void:
 	if not wave:
 		return
 		
 	var target_position = global_position + Vector3(0, 1, -2.5)  # Closer enemy position
-	var start_position = wave.position
+	var _start_position = wave.position
 	var travel_time = 0.8
 	
 	# Create smooth wave motion
@@ -282,7 +299,7 @@ func animate_wave_to_target(wave: MeshInstance3D, direction: AttackDirection) ->
 	
 	# Fade out animation
 	if wave.material_override is StandardMaterial3D:
-		var mat = wave.material_override as StandardMaterial3D
+		var _mat = wave.material_override as StandardMaterial3D
 		tween.tween_method(fade_wave_alpha, 0.7, 0.0, travel_time)
 		
 	# Clean up wave after animation
@@ -292,45 +309,38 @@ func animate_wave_to_target(wave: MeshInstance3D, direction: AttackDirection) ->
 		print("🌊 Wave dispersed!")
 
 ## Fade wave alpha during animation
-func fade_wave_alpha(alpha: float) -> void:
+func fade_wave_alpha(_alpha: float) -> void:
 	# This will be called by tween to fade the wave
 	pass
 
 ## Animate hands during Wing Chun techniques
 func animate_attack_hands(direction: AttackDirection) -> void:
-	if not left_hand or not right_hand:
+	if not left_arm_controller or not right_arm_controller:
 		return
 		
-	# Wing Chun guard position
-	var left_guard = Vector3(-0.2, -0.1, -0.4)
-	var right_guard = Vector3(0.2, -0.1, -0.4)
-	
+	# Use arm controller animations instead of direct positioning
 	match direction:
 		AttackDirection.CHAIN_PUNCH:  # I key - Rapid centerline
 			print("CHAIN PUNCH - Centerline attack!")
-			right_hand.position = right_guard + Vector3(-0.1, 0, -0.5)  # Right punch center
-			left_hand.position = left_guard + Vector3(0.1, 0, -0.2)     # Left guards
+			left_arm_controller.play_technique_animation("CHAIN_PUNCH", false)  # Left guards
+			right_arm_controller.play_technique_animation("CHAIN_PUNCH", true)  # Right attacks
 			
 		AttackDirection.TAN_DA:  # J key - Block and strike
 			print("TAN DA - Deflect and counter!")
-			left_hand.position = left_guard + Vector3(-0.2, 0.2, -0.3)  # Deflecting
-			right_hand.position = right_guard + Vector3(0, 0, -0.4)     # Striking
+			left_arm_controller.play_technique_animation("TAN_DA", true)  # Left deflects
+			right_arm_controller.play_technique_animation("TAN_DA", false)  # Right strikes
 			
 		AttackDirection.LAP_SAU:  # K key - Pull/redirect
 			print("LAP SAU - Pulling energy!")
-			left_hand.position = left_guard + Vector3(0.2, -0.2, -0.1)  # Pull motion
-			right_hand.position = right_guard + Vector3(-0.2, 0.1, -0.5) # Counter
+			left_arm_controller.play_technique_animation("LAP_SAU", true)  # Left pulls
+			right_arm_controller.play_technique_animation("LAP_SAU", false)  # Right counters
 			
 		AttackDirection.PAK_SAU:  # L key - Trap
 			print("PAK SAU - Trapping hand!")
-			left_hand.position = left_guard + Vector3(0.3, 0, -0.3)     # Slap across
-			right_hand.position = right_guard + Vector3(-0.1, 0, -0.4)  # Follow up
+			left_arm_controller.play_technique_animation("PAK_SAU", true)  # Left traps
+			right_arm_controller.play_technique_animation("PAK_SAU", false)  # Right follows
 	
-	# Return to guard position
-	await get_tree().create_timer(0.4).timeout
-	if left_hand and right_hand:
-		left_hand.position = left_guard
-		right_hand.position = right_guard
+	# Arms will automatically return to guard position via their controllers
 
 ## Update visual representation of current stance
 func update_stance_visual() -> void:
@@ -347,9 +357,15 @@ func update_stance_visual() -> void:
 		stance_indicator.visible = true
 		print("Stance indicator color changed to: ", STANCE_COLORS[current_stance])
 		print("Stance indicator position: ", stance_indicator.position)
+	
+	# Update arm controllers to match current stance
+	if left_arm_controller:
+		left_arm_controller.set_stance(current_stance)
+	if right_arm_controller:
+		right_arm_controller.set_stance(current_stance)
 
 ## Take damage from waves or attacks
-func take_damage(amount: float, wave_type: String = "") -> void:
+func take_damage(amount: float, _wave_type: String = "") -> void:
 	var actual_damage = amount * STANCE_DEFENSE_MULTIPLIERS[current_stance]
 	current_health -= actual_damage
 	health_changed.emit(current_health)
@@ -382,6 +398,177 @@ func get_damage_multiplier() -> float:
 func flash_damage() -> void:
 	# TODO: Implement damage flash effect
 	pass
+
+# ===== FRAY COMBAT FRAMEWORK INTEGRATION =====
+
+## Setup hurtbox for current stance using Wing Chun system
+func setup_stance_hurtbox() -> void:
+	# Remove existing hurtbox
+	if current_hurtbox:
+		current_hurtbox.queue_free()
+	
+	# Create new hurtbox using Wing Chun combat system
+	current_hurtbox = wing_chun_system.create_stance_hurtbox(current_stance, self)
+	
+	# Connect hit detection
+	current_hurtbox.area_entered.connect(_on_hurtbox_hit)
+	
+	print("Setup hurtbox for stance: ", Stance.keys()[current_stance])
+
+## Create hitbox for Wing Chun technique using combat system
+func create_technique_hitbox(technique: AttackDirection) -> void:
+	# Remove existing hitbox
+	if current_hitbox:
+		current_hitbox.queue_free()
+	
+	# Create new hitbox using Wing Chun combat system
+	current_hitbox = wing_chun_system.create_technique_hitbox(technique, self)
+	
+	# Setup frame timing
+	attack_frame_count = 0
+	is_in_attack_frames = true
+	
+	# Start attack frame sequence using Wing Chun system
+	wing_chun_system.activate_hitbox_sequence(current_hitbox, self)
+	
+	print("Created hitbox for technique: ", AttackDirection.keys()[technique])
+
+## Handle attack frame timing for precise Fray combat
+func start_attack_frames(hitbox_data: Dictionary) -> void:
+	# Startup frames (hitbox inactive)
+	await get_tree().create_timer(hitbox_data.startup_frames * (1.0/60.0)).timeout
+	
+	if not is_in_attack_frames:
+		return  # Attack was cancelled
+	
+	# Activate hitbox during active frames
+	if current_hitbox:
+		current_hitbox.monitoring = true
+		print("Hitbox ACTIVE - frames ", hitbox_data.startup_frames, " to ", hitbox_data.startup_frames + hitbox_data.active_frames)
+	
+	# Active frames (hitbox active)
+	await get_tree().create_timer(hitbox_data.active_frames * (1.0/60.0)).timeout
+	
+	if not is_in_attack_frames:
+		return
+	
+	# Deactivate hitbox during recovery
+	if current_hitbox:
+		current_hitbox.monitoring = false
+		print("Hitbox INACTIVE - recovery frames")
+	
+	# Recovery frames (hitbox inactive)
+	await get_tree().create_timer(hitbox_data.recovery_frames * (1.0/60.0)).timeout
+	
+	# Attack complete
+	is_in_attack_frames = false
+	if current_hitbox:
+		current_hitbox.queue_free()
+		current_hitbox = null
+
+## Handle when player's hurtbox is hit
+func _on_hurtbox_hit(area: Area3D) -> void:
+	# Check if this is an enemy attack hitbox
+	if area.name.contains("EnemyHitbox"):
+		var enemy = area.get_parent()
+		if enemy and enemy.has_method("get_attack_data"):
+			var attack_data = enemy.get_attack_data()
+			handle_fray_combat_interaction(attack_data)
+
+## Resolve combat using Wing Chun + combat system principles
+func handle_fray_combat_interaction(enemy_attack_data: Dictionary) -> void:
+	# Get current frame timing for parry window
+	var timing_frame = attack_frame_count
+	
+	# Use Wing Chun combat system to resolve combat
+	var result = wing_chun_system.resolve_wing_chun_collision(
+		enemy_attack_data.get("hitbox", null),
+		current_hurtbox,
+		timing_frame
+	)
+	
+	if result.parry_successful:
+		print("PARRY SUCCESS! Wing Chun defense effective!")
+		# Create energy wave on successful parry
+		create_parry_energy_wave(result.redirect_angle)
+		# Build resonance for successful defense
+		current_resonance = min(current_resonance + 15.0, max_resonance)
+		resonance_changed.emit(current_resonance)
+	elif result.hit_connects:
+		print("HIT TAKEN - damage: ", result.final_damage)
+		take_damage(result.final_damage)
+		# Apply knockback if needed
+		if result.knockback != Vector2.ZERO:
+			apply_knockback(result.knockback)
+	else:
+		print("ATTACK MISSED - proper spacing maintained")
+
+## Create energy wave on successful parry
+func create_parry_energy_wave(redirect_angle: float) -> void:
+	# Create energy wave mesh
+	var wave = MeshInstance3D.new()
+	var sphere_mesh = SphereMesh.new()
+	sphere_mesh.radius = 0.3
+	sphere_mesh.height = 0.6
+	wave.mesh = sphere_mesh
+	
+	# Calculate redirect direction based on Wing Chun principles
+	var redirect_direction = Vector3.FORWARD.rotated(Vector3.UP, deg_to_rad(redirect_angle))
+	
+	# Enhanced parry wave material
+	var material = StandardMaterial3D.new()
+	material.albedo_color = STANCE_COLORS[current_stance]
+	material.metallic = 0.5  # Extra metallic for parry waves
+	material.roughness = 0.1  # Very smooth for deflection
+	material.emission_enabled = true
+	material.emission = material.albedo_color * 3.0  # Brighter emission
+	material.rim_enabled = true
+	material.rim_power = 3.0  # Strong rim lighting
+	
+	wave.material_override = material
+	
+	# Position and animate parry wave
+	get_tree().current_scene.add_child(wave)
+	wave.position = global_position + Vector3(0, 1, 0)
+	animate_parry_wave(wave, redirect_direction)
+
+## Animate parry energy wave with redirect
+func animate_parry_wave(wave: MeshInstance3D, direction: Vector3) -> void:
+	var tween = create_tween()
+	tween.set_parallel(true)
+	
+	# Move in redirect direction
+	var target_position = wave.position + direction * 5.0
+	tween.tween_property(wave, "position", target_position, 1.0)
+	
+	# Scale up then down
+	tween.tween_property(wave, "scale", Vector3(2.0, 2.0, 2.0), 0.5)
+	tween.tween_property(wave, "scale", Vector3(0.1, 0.1, 0.1), 0.5).set_delay(0.5)
+	
+	# Fade out
+	tween.tween_method(fade_parry_wave, 1.0, 0.0, 1.0)
+	
+	# Clean up
+	tween.tween_callback(wave.queue_free).set_delay(1.0)
+
+## Fade parry wave alpha
+func fade_parry_wave(alpha: float) -> void:
+	if current_hitbox and current_hitbox.get_child_count() > 0:
+		var material = current_hitbox.get_child(0).material_override as StandardMaterial3D
+		if material:
+			material.albedo_color.a = alpha
+
+## Apply knockback from enemy attacks
+func apply_knockback(knockback: Vector2) -> void:
+	# Convert 2D knockback to 3D velocity
+	var knockback_3d = Vector3(knockback.x, 0, knockback.y)
+	velocity += knockback_3d
+	print("Applied knockback: ", knockback_3d)
+
+## Update hurtbox when stance changes
+func on_stance_change_fray_update() -> void:
+	setup_stance_hurtbox()
+	print("Updated Fray hurtbox for new stance: ", Stance.keys()[current_stance])
 
 ## Get the direction vector for Wing Chun techniques
 func get_attack_direction_vector(direction: AttackDirection) -> Vector3:

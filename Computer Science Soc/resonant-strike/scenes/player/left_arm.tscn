@@ -1,0 +1,84 @@
+[gd_scene load_steps=8 format=3 uid="uid://bpqm8vh5n6y8r_new"]
+
+[ext_resource type="Script" path="res://scripts/player/wing_chun_arm_controller.gd" id="1_controller"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_forearm"]
+radius = 0.08
+height = 0.6
+
+[sub_resource type="SphereMesh" id="SphereMesh_hand"]
+radius = 0.1
+height = 0.15
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_finger"]
+top_radius = 0.015
+bottom_radius = 0.015
+height = 0.08
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_skin"]
+albedo_color = Color(0.8, 0.65, 0.5, 1)
+metallic = 0.1
+roughness = 0.7
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_forearm"]
+radius = 0.08
+height = 0.6
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_hand"]
+radius = 0.1
+
+[node name="LeftArm" type="Node3D"]
+
+[node name="WingChunController" type="Node" parent="."]
+script = ExtResource("1_controller")
+
+[node name="ArmGeometry" type="Node3D" parent="."]
+
+[node name="Forearm" type="MeshInstance3D" parent="ArmGeometry"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, -0.3, 0)
+mesh = SubResource("CapsuleMesh_forearm")
+surface_material_override/0 = SubResource("StandardMaterial3D_skin")
+
+[node name="Hand" type="MeshInstance3D" parent="ArmGeometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, 0)
+mesh = SubResource("SphereMesh_hand")
+surface_material_override/0 = SubResource("StandardMaterial3D_skin")
+
+[node name="Thumb" type="MeshInstance3D" parent="ArmGeometry/Hand"]
+transform = Transform3D(-0.707, 0.707, 0, 0.707, 0.707, 0, 0, 0, 1, -0.08, 0, 0.02)
+mesh = SubResource("CylinderMesh_finger")
+surface_material_override/0 = SubResource("StandardMaterial3D_skin")
+
+[node name="IndexFinger" type="MeshInstance3D" parent="ArmGeometry/Hand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.04, -0.08, 0.06)
+mesh = SubResource("CylinderMesh_finger")
+surface_material_override/0 = SubResource("StandardMaterial3D_skin")
+
+[node name="MiddleFinger" type="MeshInstance3D" parent="ArmGeometry/Hand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.09, 0.06)
+mesh = SubResource("CylinderMesh_finger")
+surface_material_override/0 = SubResource("StandardMaterial3D_skin")
+
+[node name="RingFinger" type="MeshInstance3D" parent="ArmGeometry/Hand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.04, -0.08, 0.06)
+mesh = SubResource("CylinderMesh_finger")
+surface_material_override/0 = SubResource("StandardMaterial3D_skin")
+
+[node name="PinkyFinger" type="MeshInstance3D" parent="ArmGeometry/Hand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08, -0.06, 0.06)
+mesh = SubResource("CylinderMesh_finger")
+surface_material_override/0 = SubResource("StandardMaterial3D_skin")
+
+[node name="Hitboxes" type="Node3D" parent="."]
+
+[node name="ForearmHitbox" type="Area3D" parent="Hitboxes"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, -0.3, 0)
+
+[node name="ForearmCollision" type="CollisionShape3D" parent="Hitboxes/ForearmHitbox"]
+shape = SubResource("CapsuleShape3D_forearm")
+
+[node name="HandHitbox" type="Area3D" parent="Hitboxes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, 0)
+
+[node name="HandCollision" type="CollisionShape3D" parent="Hitboxes/HandHitbox"]
+shape = SubResource("SphereShape3D_hand")

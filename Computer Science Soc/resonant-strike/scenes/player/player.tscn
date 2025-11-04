@@ -1,10 +1,16 @@
-[gd_scene load_steps=4 format=3 uid="uid://b24xvqc146vji"]
+[gd_scene load_steps=7 format=3 uid="uid://b24xvqc146vji"]
 
-[ext_resource type="Script" uid="uid://b52ndavnnj0ne" path="res://scripts/player/player_controller.gd" id="1_4flbx"]
+[ext_resource type="Script" path="res://scripts/player/player_controller.gd" id="1_4flbx"]
+[ext_resource type="PackedScene" path="res://scenes/player/left_arm.tscn" id="2_left_arm"]
+[ext_resource type="PackedScene" path="res://scenes/player/right_arm.tscn" id="3_right_arm"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_onrkg"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hqtel"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_stance_indicator"]
+radius = 0.1
+height = 0.2
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_4flbx")
@@ -17,3 +23,14 @@ mesh = SubResource("CapsuleMesh_onrkg")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_hqtel")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="StanceIndicator" type="MeshInstance3D" parent="Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3, -1)
+mesh = SubResource("SphereMesh_stance_indicator")
+
+[node name="LeftArm" parent="Camera3D" instance=ExtResource("2_left_arm")]
+
+[node name="RightArm" parent="Camera3D" instance=ExtResource("3_right_arm")]

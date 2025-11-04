@@ -1,7 +1,7 @@
 extends Node
 class_name WingChunCombatSystem
 
-## Fray + Wing Chun integration for precise combat detection
+## Custom Wing Chun combat system for precise martial arts detection
 ## Uses Area3D hitboxes/hurtboxes with Wing Chun frame data
 
 # Wing Chun technique frame data
@@ -48,7 +48,7 @@ var STANCE_PROPERTIES = {
 	}
 }
 
-## Create Fray-style hitbox for Wing Chun technique
+## Create Area3D hitbox for Wing Chun technique
 func create_technique_hitbox(technique_type: int, parent_node: Node3D) -> Area3D:
 	var data = TECHNIQUE_FRAME_DATA[technique_type]
 	
@@ -80,7 +80,7 @@ func create_technique_hitbox(technique_type: int, parent_node: Node3D) -> Area3D
 	
 	return hitbox
 
-## Create Fray-style hurtbox for Wing Chun stance
+## Create Area3D hurtbox for Wing Chun stance
 func create_stance_hurtbox(stance_type: int, parent_node: Node3D) -> Area3D:
 	var data = STANCE_PROPERTIES[stance_type]
 	
@@ -110,7 +110,7 @@ func create_stance_hurtbox(stance_type: int, parent_node: Node3D) -> Area3D:
 	
 	return hurtbox
 
-## Handle frame-based hitbox activation (Fray-style timing)
+## Handle frame-based hitbox activation (precise timing)
 func activate_hitbox_sequence(hitbox: Area3D, parent_node: Node3D) -> void:
 	var startup = hitbox.get_meta("startup_frames")
 	var active = hitbox.get_meta("active_frames") 

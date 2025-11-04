@@ -399,7 +399,7 @@ func flash_damage() -> void:
 	# TODO: Implement damage flash effect
 	pass
 
-# ===== FRAY COMBAT FRAMEWORK INTEGRATION =====
+# ===== WING CHUN COMBAT SYSTEM INTEGRATION =====
 
 ## Setup hurtbox for current stance using Wing Chun system
 func setup_stance_hurtbox() -> void:
@@ -433,7 +433,7 @@ func create_technique_hitbox(technique: AttackDirection) -> void:
 	
 	print("Created hitbox for technique: ", AttackDirection.keys()[technique])
 
-## Handle attack frame timing for precise Fray combat
+## Handle attack frame timing for precise Wing Chun combat
 func start_attack_frames(hitbox_data: Dictionary) -> void:
 	# Startup frames (hitbox inactive)
 	await get_tree().create_timer(hitbox_data.startup_frames * (1.0/60.0)).timeout
@@ -473,10 +473,10 @@ func _on_hurtbox_hit(area: Area3D) -> void:
 		var enemy = area.get_parent()
 		if enemy and enemy.has_method("get_attack_data"):
 			var attack_data = enemy.get_attack_data()
-			handle_fray_combat_interaction(attack_data)
+			handle_wing_chun_combat_interaction(attack_data)
 
 ## Resolve combat using Wing Chun + combat system principles
-func handle_fray_combat_interaction(enemy_attack_data: Dictionary) -> void:
+func handle_wing_chun_combat_interaction(enemy_attack_data: Dictionary) -> void:
 	# Get current frame timing for parry window
 	var timing_frame = attack_frame_count
 	
@@ -566,9 +566,9 @@ func apply_knockback(knockback: Vector2) -> void:
 	print("Applied knockback: ", knockback_3d)
 
 ## Update hurtbox when stance changes
-func on_stance_change_fray_update() -> void:
+func on_stance_change_wing_chun_update() -> void:
 	setup_stance_hurtbox()
-	print("Updated Fray hurtbox for new stance: ", Stance.keys()[current_stance])
+	print("Updated Wing Chun hurtbox for new stance: ", Stance.keys()[current_stance])
 
 ## Get the direction vector for Wing Chun techniques
 func get_attack_direction_vector(direction: AttackDirection) -> Vector3:

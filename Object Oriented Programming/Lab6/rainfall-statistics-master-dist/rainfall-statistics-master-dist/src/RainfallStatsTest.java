@@ -17,18 +17,18 @@ public class RainfallStatsTest {
 	 * If no measurements have been added, the getMean method
 	 * should throw an IllegalStateException.
 	 */
-	@Test
+	@Test(expected = IllegalStateException.class)
 	public void testMeanOfNoMeasurements() {
-		// TODO: write unit test
+		stats.getMean();
 	}
 	
 	/*
 	 * If no measurements have been added, the getMax method
 	 * should throw an IllegalStateException.
 	 */
-	@Test
+	@Test(expected = IllegalStateException.class)
 	public void testMaxOfNoMeasurements() {
-		// TODO: write unit test
+		stats.getMax();
 	}
 	
 	/*
@@ -47,9 +47,9 @@ public class RainfallStatsTest {
 	 * The addMeasurement method should throw an InvalidRainfallException
 	 * if the measurement is negative.
 	 */
-	@Test
-	public void testAddInvalidMeasurement() {
-		// TODO: write unit test
+	@Test(expected = InvalidRainfallException.class)
+	public void testAddInvalidMeasurement() throws InvalidRainfallException {
+		stats.addMeasurement(-1.0);
 	}
 	
 	/*
@@ -84,8 +84,4 @@ public class RainfallStatsTest {
 		stats.addMeasurement(4.0);
 		assertEquals(5.0, stats.getMax(), 0);
 	}
-
-    private void assertEquals(int i, String count) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }

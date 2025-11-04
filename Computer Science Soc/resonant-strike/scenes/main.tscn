@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://d2e022u0g5jm5"]
+[gd_scene load_steps=10 format=3 uid="uid://d2e022u0g5jm5"]
 
 [ext_resource type="Script" uid="uid://ccn35hyrnhkl7" path="res://scripts/managers/combat_manager.gd" id="1_jyhfs"]
 [ext_resource type="PackedScene" uid="uid://ct1t2cfn1yq3t" path="res://scenes/enemies/fast_striker.tscn" id="2_tbgi4"]
@@ -10,10 +10,6 @@ size = Vector2(20, 20)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_85g3d"]
 size = Vector3(20, 0.2, 20)
-
-[sub_resource type="SphereMesh" id="SphereMesh_jyhfs"]
-radius = 0.3
-height = 0.6
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_jyhfs"]
 
@@ -53,15 +49,6 @@ shadow_enabled = true
 shadow_opacity = 0.8
 
 [node name="Player" parent="." instance=ExtResource("3_tefeu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0191409, 0.98398626, 0.0007454157)
-
-[node name="Camera3D2" type="Camera3D" parent="Player"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
-fov = 90.0
-
-[node name="StanceIndicator" type="MeshInstance3D" parent="Player/Camera3D2"]
-transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, -0.5, -1)
-mesh = SubResource("SphereMesh_jyhfs")
 
 [node name="WaveSystem" type="Node" parent="."]
 script = ExtResource("4_o6xl0")

@@ -35,12 +35,12 @@ script = ExtResource("1_controller")
 [node name="ArmGeometry" type="Node3D" parent="."]
 
 [node name="Forearm" type="MeshInstance3D" parent="ArmGeometry"]
-transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, -0.3, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.2, -0.4)
 mesh = SubResource("CapsuleMesh_forearm")
 surface_material_override/0 = SubResource("StandardMaterial3D_skin")
 
 [node name="Hand" type="MeshInstance3D" parent="ArmGeometry"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.4, -0.6)
 mesh = SubResource("SphereMesh_hand")
 surface_material_override/0 = SubResource("StandardMaterial3D_skin")
 

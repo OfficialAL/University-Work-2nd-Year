@@ -5,10 +5,10 @@ class_name WingChunArmController
 ## Handles stance changes and technique animations
 
 # Reference to the arm components
-@onready var forearm: MeshInstance3D = get_parent().get_node("Forearm")
-@onready var hand: MeshInstance3D = get_parent().get_node("Forearm/Hand")
-@onready var animation_player: AnimationPlayer = get_parent().get_node("AnimationPlayer")
-@onready var hand_hitbox: Area3D = get_parent().get_node("Forearm/Hand/HandHitbox")
+@onready var forearm: MeshInstance3D = get_parent().get_node("ArmGeometry/Forearm")
+@onready var hand: MeshInstance3D = get_parent().get_node("ArmGeometry/Hand")
+@onready var animation_player: AnimationPlayer = get_parent().get_node("AnimationPlayer") if get_parent().has_node("AnimationPlayer") else null
+@onready var hand_hitbox: Area3D = get_parent().get_node("Hitboxes/HandHitbox")
 
 # Wing Chun stance positions and rotations
 const WING_CHUN_POSITIONS = {
@@ -82,6 +82,20 @@ var base_position: Vector3
 var base_rotation: Vector3
 
 func _ready() -> void:
+	# Wait for all nodes to be ready
+	await get_tree().process_frame
+	
+	# Verify all required nodes exist
+	if not forearm:
+		push_error("Forearm node not found at path: ArmGeometry/Forearm")
+		return
+	if not hand:
+		push_error("Hand node not found at path: ArmGeometry/Hand") 
+		return
+	if not hand_hitbox:
+		push_error("Hand hitbox not found at path: Hitboxes/HandHitbox")
+		return
+	
 	# Store initial positions
 	base_position = forearm.position
 	base_rotation = forearm.rotation_degrees
@@ -95,6 +109,11 @@ func _ready() -> void:
 func set_wing_chun_stance(stance_id: int) -> void:
 	if stance_id < 0 or stance_id > 3:
 		push_warning("Invalid Wing Chun stance ID: " + str(stance_id))
+		return
+	
+	# Ensure nodes are valid
+	if not forearm or not hand:
+		push_warning("Arm nodes not ready for stance change")
 		return
 	
 	current_stance = stance_id
@@ -232,6 +251,33 @@ func is_elbow_position_correct() -> bool:
 func is_wrist_alignment_good() -> bool:
 	# Wrist should be aligned for proper energy transfer
 	return abs(hand.rotation_degrees.z) < 20
+
+# ===== EXTERNAL INTERFACE FOR PLAYER CONTROLLER =====
+
+## Set stance (external interface)
+func set_stance(stance_id: int) -> void:
+	set_wing_chun_stance(stance_id)
+
+## Play technique animation (external interface)
+func play_technique_animation(technique_name: String, _is_primary: bool = true) -> void:
+	var technique_id = -1
+	
+	# Convert technique name to ID
+	match technique_name:
+		"CHAIN_PUNCH":
+			technique_id = 0
+		"TAN_DA":
+			technique_id = 1
+		"LAP_SAU":
+			technique_id = 2
+		"PAK_SAU":
+			technique_id = 3
+		_:
+			push_warning("Unknown technique: " + technique_name)
+			return
+	
+	# Execute technique animation
+	execute_wing_chun_technique(technique_id)
 
 func get_stance_stability() -> float:
 	# Calculate stance stability based on position consistency

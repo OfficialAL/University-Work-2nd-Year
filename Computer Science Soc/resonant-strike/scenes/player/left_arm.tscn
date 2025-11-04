@@ -35,22 +35,22 @@ script = ExtResource("1_controller")
 [node name="ArmGeometry" type="Node3D" parent="."]
 
 [node name="Forearm" type="MeshInstance3D" parent="ArmGeometry"]
-transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, -0.3, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, -0.2, -0.4)
 mesh = SubResource("CapsuleMesh_forearm")
 surface_material_override/0 = SubResource("StandardMaterial3D_skin")
 
 [node name="Hand" type="MeshInstance3D" parent="ArmGeometry"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, -0.4, -0.6)
 mesh = SubResource("SphereMesh_hand")
 surface_material_override/0 = SubResource("StandardMaterial3D_skin")
 
 [node name="Thumb" type="MeshInstance3D" parent="ArmGeometry/Hand"]
-transform = Transform3D(-0.707, 0.707, 0, 0.707, 0.707, 0, 0, 0, 1, -0.08, 0, 0.02)
+transform = Transform3D(-0.707, 0.707, 0, 0.707, 0.707, 0, 0, 0, 1, 0.08, 0, 0.02)
 mesh = SubResource("CylinderMesh_finger")
 surface_material_override/0 = SubResource("StandardMaterial3D_skin")
 
 [node name="IndexFinger" type="MeshInstance3D" parent="ArmGeometry/Hand"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.04, -0.08, 0.06)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.04, -0.08, 0.06)
 mesh = SubResource("CylinderMesh_finger")
 surface_material_override/0 = SubResource("StandardMaterial3D_skin")
 
@@ -60,25 +60,25 @@ mesh = SubResource("CylinderMesh_finger")
 surface_material_override/0 = SubResource("StandardMaterial3D_skin")
 
 [node name="RingFinger" type="MeshInstance3D" parent="ArmGeometry/Hand"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.04, -0.08, 0.06)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.04, -0.08, 0.06)
 mesh = SubResource("CylinderMesh_finger")
 surface_material_override/0 = SubResource("StandardMaterial3D_skin")
 
 [node name="PinkyFinger" type="MeshInstance3D" parent="ArmGeometry/Hand"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08, -0.06, 0.06)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08, -0.06, 0.06)
 mesh = SubResource("CylinderMesh_finger")
 surface_material_override/0 = SubResource("StandardMaterial3D_skin")
 
 [node name="Hitboxes" type="Node3D" parent="."]
 
 [node name="ForearmHitbox" type="Area3D" parent="Hitboxes"]
-transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, -0.3, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, -0.2, -0.4)
 
 [node name="ForearmCollision" type="CollisionShape3D" parent="Hitboxes/ForearmHitbox"]
 shape = SubResource("CapsuleShape3D_forearm")
 
 [node name="HandHitbox" type="Area3D" parent="Hitboxes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, -0.4, -0.6)
 
 [node name="HandCollision" type="CollisionShape3D" parent="Hitboxes/HandHitbox"]
 shape = SubResource("SphereShape3D_hand")

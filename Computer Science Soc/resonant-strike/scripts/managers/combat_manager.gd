@@ -170,7 +170,7 @@ func spawn_next_enemy() -> void:
 	current_enemy = enemy_node
 	
 	# Now position enemy safely (after it's in the tree) - MUCH CLOSER for Ip Man style duel
-	var spawn_position = Vector3(0, 0, -2.5)  # Ground level - intimate duel distance
+	var spawn_position = Vector3(0, 0, -2.5)  # Ground level to match player - intimate duel distance
 	if enemy_spawn_point and enemy_spawn_point.is_inside_tree():
 		spawn_position = enemy_spawn_point.global_position
 	

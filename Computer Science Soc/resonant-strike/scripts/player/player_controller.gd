@@ -66,8 +66,8 @@ var attack_timer: float = 0.0
 # References (to be set in scene)
 @onready var visual_mesh: MeshInstance3D = $Visual/PlayerMesh
 @onready var stance_indicator: MeshInstance3D = $Camera3D/StanceIndicator
-@onready var left_arm_controller = $Camera3D/LeftArm/WingChunController if has_node("Camera3D/LeftArm/WingChunController") else null
-@onready var right_arm_controller = $Camera3D/RightArm/WingChunController if has_node("Camera3D/RightArm/WingChunController") else null
+@onready var left_arm_controller = $Visual/LeftArm/LeftArmController if has_node("Visual/LeftArm/LeftArmController") else null
+@onready var right_arm_controller = $Visual/RightArm/RightArmController if has_node("Visual/RightArm/RightArmController") else null
 @onready var animation_player: AnimationPlayer = $AnimationPlayer if has_node("AnimationPlayer") else null
 
 # Signals
